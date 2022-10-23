@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" href="assets/style/style.css" />
+    <script src="assets/script/draganddrop.js" defer></script>
+    <script src="/socket.io/socket.io.js"></script>
+</head>
+<body>
+<main>
+
+</main>
+<div id="drop_file_zone" ondrop="upload_file(event)" ondragover="return false">
+    <div id="drag_upload_file">
+        <p>Drop file(s) here</p>
+        <p>or</p>
+        <p><input type="button" value="Select File(s)" onclick="file_explorer();" /></p>
+        <input type="file" id="selectfile" multiple />
+    </div>
+</div>
+</body>
+<script>
+    let socket = io("http://localhost:3000");
+
+    socket.on("predict", (number) => {
+        const p = document.createElement("p");
+        document.querySelector("main").appendChild(p)
+        p.innerHTML = number
+        console.log(number)
+    })
+    socket.on("face", (name) => {
+        const p = document.createElement("p");
+        document.querySelector("main").appendChild(p)
+        p.innerHTML = name
+        console.log(name)
+    })
+
+    navigator.mediaDevices.getUserMedia({ video: true, audio: true })
+    .then((video) => {
+        const track = video.getVideoTracks()[0]
+        setInterval(() => {
+            let imageCapture = new ImageCapture(track)
+            imageCapture.takePhoto().then((image) => {
+                let form_data = new FormData()
+                form_data.append('file', image)
+                let xhttp = new XMLHttpRequest();
+                xhttp.open("POST", "/face", true);
+                xhttp.send(form_data);
+            })
+        }, 1000)
+    })
+</script>
+</html>

@@ -1,0 +1,21 @@
+#drop_file_zone {
+  background-color: #EEE;
+  border: #999 5px dashed;
+  width: 290px;
+  height: 200px;
+  padding: 8px;
+  font-size: 18px;
+}
+
+#drag_upload_file {
+  width: 50%;
+  margin: 0 auto;
+
+  p {
+    text-align: center;
+  }
+
+  #selectfile {
+    display: none;
+  }
+}
