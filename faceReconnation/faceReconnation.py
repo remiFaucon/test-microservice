@@ -42,7 +42,6 @@ def main():
             best_match_index = np.argmin(face_distances)
             if matches[best_match_index]:
                 name = know[best_match_index]
-
             face_names.append(name)
 
         if len(face_names) == 0:
@@ -52,8 +51,6 @@ def main():
             "names": [x for x in face_names],
             "landmarks": {x: face_landmarks_list[face_names.index(x)] for x in face_names}
         }
-
-        print()
 
         channel.basic_publish(exchange='', routing_key='faceRep', body=json.dumps(response, indent=4).encode("utf-8"),
                                   properties=pika.BasicProperties(reply_to=callback_queue, ))

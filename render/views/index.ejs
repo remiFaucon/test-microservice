@@ -9,7 +9,7 @@
 </head>
 <body>
 <main>
-
+<canvas id="myCanvas"></canvas>
 </main>
 <div id="drop_file_zone" ondrop="upload_file(event)" ondragover="return false">
     <div id="drag_upload_file">
@@ -27,13 +27,21 @@
         const p = document.createElement("p");
         document.querySelector("main").appendChild(p)
         p.innerHTML = number
-        console.log(number)
     })
-    socket.on("face", (name) => {
-        const p = document.createElement("p");
-        document.querySelector("main").appendChild(p)
-        p.innerHTML = name
-        console.log(name)
+    socket.on("face", (data) => {
+        const canvas = document.getElementById("myCanvas");
+        const ctx = canvas.getContext("2d")
+        ctx.fillStyle = "#FF0000";
+        canvas.width = 1000
+        canvas.height = 700
+        data.names.forEach(name => {
+            console.log(data.landmarks[name])
+            Object.values(data.landmarks[name]).forEach(values => {
+                values.forEach(XY => {
+                    ctx.fillRect(XY[0], XY[1], 1, 1);
+                })
+            })
+        })
     })
 
     navigator.mediaDevices.getUserMedia({ video: true, audio: true })
@@ -44,9 +52,15 @@
             imageCapture.takePhoto().then((image) => {
                 let form_data = new FormData()
                 form_data.append('file', image)
-                let xhttp = new XMLHttpRequest();
-                xhttp.open("POST", "/face", true);
-                xhttp.send(form_data);
+                // let xhttp = new XMLHttpRequest();
+                // xhttp.open("POST", "/face", true);
+                // xhttp.onload = () => {
+                //     console.log(this.responseText)
+                // }
+                // xhttp.send(form_data);
+                fetch("/face", {method: "POST", body: form_data}).then(data => {
+                    data.json().then(json => console.log(json))
+                })
             })
         }, 1000)
     })

@@ -1,16 +1,16 @@
 const express = require('express')
-const app = express()
-const port = 3000
 const fileUpload = require('express-fileupload');
 const cors = require('cors');
 const bodyParser = require('body-parser');
 const morgan = require('morgan');
 const http = require('http');
-const server = http.createServer(app);
 const { Server } = require("socket.io");
-const io = new Server(server);
-
 const amqp = require('amqplib/callback_api');
+
+const app = express()
+const server = http.createServer(app);
+const io = new Server(server);
+const port = 3000
 
 app.use(cors());
 app.use(bodyParser.json());
@@ -80,7 +80,15 @@ amqp.connect( 'amqp://localhost', (err, conn) => {
         channel.assertQueue("faceReq", {durable: false});
         app.post("/face", (req, res) => {
             channel.sendToQueue("faceReq", req.files["file"].data)
-        })
+            new Promise((resolve) => {
+                conn.createChannel((err2, channel) => {
+                    channel.assertQueue("faceRep", {durable: false});
+                    channel.consume("faceRep", msg => {
+                        resolve(JSON.parse(msg.content.toString()))
+                    }, {noAck: true})
+                })
+            }).then(data => res.status(200).send(data))
+         })
     })
 
 io.on('connection', (socket) => {
@@ -88,12 +96,6 @@ io.on('connection', (socket) => {
         channel.assertQueue("numberRep", {durable: false});
         channel.consume("numberRep", msg => {
             socket.emit('predict', " "+msg.content.toJSON().data[0]+" ")
-        }, {noAck: true})
-    })
-    conn.createChannel((err1, channel) => {
-        channel.assertQueue("faceRep", {durable: false});
-        channel.consume("faceRep", msg => {
-            socket.emit('face', JSON.parse(msg.content.toString()))
         }, {noAck: true})
         })
     })

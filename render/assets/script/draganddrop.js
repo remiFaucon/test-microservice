@@ -13,11 +13,11 @@ function file_explorer() {
 
 function ajax_file_upload(files_obj, route) {
     if(files_obj !== undefined) {
-        var form_data = new FormData();
-        for(i=0; i<files_obj.length; i++) {
+        const form_data = new FormData();
+        for(let i=0; i<files_obj.length; i++) {
             form_data.append('file[]', files_obj[i]);
         }
-        var xhttp = new XMLHttpRequest();
+        const xhttp = new XMLHttpRequest();
         xhttp.open("POST", route, true);
         xhttp.onload = function(event) {
             if (xhttp.status === 200) {
