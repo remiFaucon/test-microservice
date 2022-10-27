@@ -1,3 +1,5 @@
+import json
+
 import numpy as np
 from sklearn import datasets
 from sklearn.neural_network import MLPClassifier
@@ -31,9 +33,11 @@ def main():
         for i in range(image.width):
             for j in range(image.height):
                 pixels.append(round((image.getpixel((i, j)) + 1) / 16))
-        predicted = mlp.predict(np.array([pixels]))
-        print(np.frombuffer(predicted.tobytes(), dtype=int))
-        channel.basic_publish(exchange='', routing_key='numberRep', body=predicted.tobytes(),
+        predicted = {
+            "number": mlp.predict(np.array([pixels])).tolist(),
+        }
+        # print(np.frombuffer(predicted.tobytes(), dtype=int))
+        channel.basic_publish(exchange='', routing_key='numberRep', body=json.dumps(predicted, indent=4).encode("utf-8"),
                               properties=pika.BasicProperties(reply_to=callback_queue, ))
 
     channel.basic_consume(queue='numberReq', on_message_callback=callback, auto_ack=True)
