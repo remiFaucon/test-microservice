@@ -4,7 +4,7 @@ import pika, sys, os
 import face_recognition
 import numpy as np
 from PIL import Image
-from PIL.Image import Resampling
+# from PIL.Image import Resampling
 
 
 def main():
@@ -22,7 +22,7 @@ def main():
     def callback(ch, method, properties, body):
         small_frame = Image.open(io.BytesIO(body))
         small_frame.convert("RGB")
-        small_frame.thumbnail((300, 300), Resampling.LANCZOS)
+        small_frame.thumbnail((300, 300), Image.BICUBIC)
         small_frame.save("temp.png")
         img = face_recognition.load_image_file("temp.png", "RGB")
 

@@ -1,0 +1,10 @@
+federation_version: 2
+subgraphs:
+  express:
+    routing_url: http://localhost:3001/graphql
+    schema:
+      file: ./schema.graphql
+  auth:
+    routing_url: http://localhost:3002/
+    schema:
+      file: ../../auth/graph/schema.graphqls

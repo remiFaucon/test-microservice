@@ -1,0 +1,23 @@
+type Query {
+    loginUser(uuid: String!): Login
+}
+type Mutation {
+    login(user: UserInput!): LoginResponse
+}
+type User {
+    name: String!
+    email: String!
+    password: String!
+}
+input UserInput {
+    name: String!
+    email: String!
+    password: String!
+}
+type Login {
+    user: User!
+    uuid: String
+}
+type LoginResponse {
+    uuid: String!
+}
