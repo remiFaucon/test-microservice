@@ -9,11 +9,13 @@ const gateway = new ApolloGateway({
         useChunkedTransfer: true,
         willSendRequest({ request, context }: any) {
             request.http.headers.set('userId', context.userId);
-            // for now pass authorization also
             request.http.headers.set('authorization', context.authorization);
             request.http.headers.set('permissions', context.permissions);
         },
     }),
+    introspectionHeaders: {
+        "content-type": "multipart/form-data"
+    },
     supergraphSdl: new IntrospectAndCompose({
         subgraphs: [
             {name: "express", url: "http://localhost:3001/graphql"},
@@ -21,26 +23,14 @@ const gateway = new ApolloGateway({
             {name: "face", url: "http://localhost:5000/graphql"}
         ],
         introspectionHeaders: {
-            // Authorization: 'Bearer abc123'
             "content-type": "multipart/form-data"
         },
     }),
-    // buildService({ url }) {
-    //     return new AuthenticatedDataSource({url});
-    // },
 });
 
 const serverApollo = new ApolloServer({
     gateway: gateway,
+    csrfPrevention: { requestHeaders: ['Some-Special-Header']}
 });
 
 startStandaloneServer(serverApollo).then(obj => console.log(`🚀  Server ready at ${obj.url}`))
-
-
-
-// class AuthenticatedDataSource extends FileUploadDataSource {
-    // willSendRequest({request, context}: {request: GraphQLRequest; context: any;}) {
-    //     request.http?.headers.set("token", JSON.stringify(context.token));
-    //     request.http?.headers.set("isauth", JSON.stringify(context.isAuth));
-    // }
-// }

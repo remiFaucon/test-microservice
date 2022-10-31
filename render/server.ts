@@ -34,12 +34,12 @@ app.use('/assets', express.static('./assets'))
 app.use('/assetsjs', express.static('./dist/assets'))
 
 app.get('/', (req, res) => {
-    if (login.filter(e => e.uuid === req.query.uuid).length > 0){
+    // if (login.filter(e => e.uuid === req.query.uuid).length > 0){
         res.render("index.ejs");
-    }
-    else {
-        res.redirect("/login")
-    }
+    // }
+    // else {
+    //     res.redirect("/login")
+    // }
 })
 app.get('/login', (req, res) => {
     res.render("login.ejs");

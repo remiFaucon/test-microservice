@@ -115,6 +115,7 @@ def graphql_server():
 def main():
     connection = pika.BlockingConnection(pika.ConnectionParameters(host='localhost'))
     channel = connection.channel()
+    channel.queue_declare("faceReq", False, False, False, False, None)
     for (dirpath, dirnames, filenames) in os.walk("know"):
         know.extend(filenames)
         for filename in filenames:

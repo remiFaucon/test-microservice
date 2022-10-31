@@ -8,3 +8,12 @@
 /faceReconnation/know/valerie.jpg
 /render/dist/
 /gateway/node_modules/
+/auth/.idea/.gitignore
+/auth/.idea/auth.iml
+/auth/.idea/modules.xml
+/gateway/package-lock.json
+/auth/.idea/inspectionProfiles/Project_Default.xml
+/faceReconnation/know/remi2.jpg
+/gateway/dist/server.js
+/render/temp.png
+/auth/.idea/vcs.xml
