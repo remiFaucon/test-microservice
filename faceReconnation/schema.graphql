@@ -1,0 +1,13 @@
+scalar Upload
+
+type Query {
+    face(image: Upload!): FaceRes!
+    addRecognizablePerson(image: Upload!, name: String): String
+
+}
+
+type FaceRes {
+    names: [String]!
+    "object of landmarks"
+    landmarks: String!
+}

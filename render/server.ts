@@ -1,43 +1,24 @@
-import express, {request} from 'express';
+import express from 'express';
 import cors from 'cors';
 import bodyParser from 'body-parser';
 import morgan from 'morgan';
 import http from 'http';
-import {Server} from "socket.io";
 import amqp from 'amqplib/callback_api';
 import ps from 'ps-node';
 import fileUpload from "express-fileupload";
 import {PythonShell} from "python-shell";
-import {log} from "./types";
-import {v1} from "uuid"
-import {graphqlHTTP} from "express-graphql";
 import { buildFederatedSchema } from "@apollo/federation";
-
-import {resolvers} from "./graphql/resolver";
+import {login, resolvers} from "./graphql/resolver";
 import { ApolloServer } from 'apollo-server-express';
 import { gql } from 'graphql-tag';
 import * as fs from "fs";
-import {ApolloGateway} from "@apollo/gateway";
-
 const app = express()
 const server = http.createServer(app);
-const io = new Server(server);
 const port = 3001
 
 const typeDefs = gql`${fs.readFileSync("./graphql/schema.graphql")}`
 
-
-const supergraphSdl = fs.readFileSync('./graphql/superschema.graphql').toString();
-
-const gateway = new ApolloGateway({
-    serviceList: [
-        {name: "express", url: "http://localhost:3001/graphql"},
-        {name: "auth", url: "http://localhost:3002/query"}
-    ]
-});
-
 const serverApollo = new ApolloServer({
-    gateway: gateway,
     schema: buildFederatedSchema([{ typeDefs, resolvers }]),
 });
 
@@ -51,21 +32,9 @@ app.use(fileUpload({createParentPath: true}));
 app.set('view engine', 'ejs');
 app.use('/assets', express.static('./assets'))
 app.use('/assetsjs', express.static('./dist/assets'))
-// app.use(
-//     '/graphql1',
-//     graphqlHTTP((request, response, graphQLParams) => ({
-//         typeDefs,
-//         rootValue: resolver,
-//         graphiql: true,
-//         context: {
-//             request,
-//             response,
-//         },
-//     }))
-// );
 
 app.get('/', (req, res) => {
-    if (log.filter(e => e.uuid === req.query.uuid).length > 0){
+    if (login.filter(e => e.uuid === req.query.uuid).length > 0){
         res.render("index.ejs");
     }
     else {
@@ -84,16 +53,6 @@ function programmeRun(commandObject: ps.Query) {
             if (typeof commandObject.arguments === "string")
                 PythonShell.run(commandObject.arguments, undefined, (err, results) => console.log(err, results))
     })
-}
-
-
-const log: log[] = []
-
-function onLogin(identifiant: log) {
-    const uuid = v1()
-    identifiant.uuid = uuid
-    log.push(identifiant)
-    return uuid
 }
 
 amqp.connect( 'amqp://localhost', (err, conn) => {
@@ -159,11 +118,7 @@ amqp.connect( 'amqp://localhost', (err, conn) => {
                     console.log(msg!.content.toString())
                     if (JSON.parse(msg!.content.toString()).name !== "")
                         if (res.statusCode !== 201)
-                            res.redirect("/?uuid="+ onLogin({user: {
-                                    name: req.body.name,
-                                    email: req.body.name,
-                                    password: req.body.password
-                                }}))
+                            res.redirect("/?uuid="+ resolvers.Mutation.login({user: {name: req.body.name, email: req.body.name, password: req.body.password}}, 1).uuid)
                     else
                         if (res.statusCode !== 201)
                             res.render("login.ejs")
@@ -186,7 +141,7 @@ amqp.connect( 'amqp://localhost', (err, conn) => {
                     clearTimeout(timeout);
                     if (JSON.parse(msg!.content.toString()).status === "registered")
                         if (res.statusCode !== 201)
-                            res.redirect('/?uuid=' + onLogin({user: {name: req.body.name, email: req.body.name, password: req.body.password}}))
+                            res.redirect('/?uuid=' + resolvers.Mutation.login({user: {name: req.body.name, email: req.body.name, password: req.body.password}}, 1).uuid)
                     else
                         if (res.statusCode !== 201)
                             res.render("login.ejs")

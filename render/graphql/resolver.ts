@@ -3,21 +3,21 @@ import { AMQPPubSub } from 'graphql-amqp-subscriptions';
 import amqp from "amqplib";
 import {v1} from "uuid";
 
-const log: log[] = [
+export const login: log[] = [
     {user: {name: "default", email: "default@default.com", password: 123456}, uuid: 'khbkhvk'}
 ]
 
 export const resolvers = {
     Query: {
         loginUser: ({uuid}: any, context: any): log => {
-            return log.filter(e => e.uuid === uuid)[0]
+            return login.filter(e => e.uuid === uuid)[0]
         },
     },
     Mutation: {
         login: ({user}: any, context: any): any => {
             const uuid = v1()
             user.uuid = uuid
-            log.push(user)
+            login.push(user)
             return {uuid: uuid}
         }
     }

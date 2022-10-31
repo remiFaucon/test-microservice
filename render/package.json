@@ -9,6 +9,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@apollo/federation": "^0.37.1",
     "@apollo/gateway": "^2.1.4",
     "@apollo/server": "^4.0.4",
     "@types/amqplib": "^0.8.2",

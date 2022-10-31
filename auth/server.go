@@ -4,6 +4,7 @@ import (
 	"log"
 	"main/graph"
 	"main/graph/generated"
+	"main/services/auth"
 	"net/http"
 	"os"
 
@@ -18,7 +19,6 @@ func main() {
 	if port == "" {
 		port = defaultPort
 	}
-
 	srv := handler.NewDefaultServer(generated.NewExecutableSchema(generated.Config{Resolvers: &graph.Resolver{}}))
 
 	http.Handle("/", playground.Handler("GraphQL playground", "/query"))
@@ -26,4 +26,5 @@ func main() {
 
 	log.Printf("connect to http://localhost:%s/ for GraphQL playground", port)
 	log.Fatal(http.ListenAndServe(":"+port, nil))
+	auth.Main()
 }
