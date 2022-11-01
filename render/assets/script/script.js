@@ -22,11 +22,16 @@ function post (track) {
         //         "name": "remi3"
         //       }
         //     }`)
+
+        let headers = new Headers();
+
+        headers.append('Content-Type', 'multipart/form-data');
+        // headers.append('Accept', 'application/json');
+        headers.append('Origin','http://localhost:3001');
+        headers.append('Access-Control-Allow-Origin','http://localhost:5000');
+        headers.append('Apollo-Require-Preflight','true');
+
         form_data.append("operations", JSON.stringify({query: `query ($image: Upload!) { face(image: $file) { names landmarks } }`, variables: {file: null}}))
-
-
-
-
         console.log(JSON.stringify({query: `query ($image: Upload!) { face(image: $file) { names landmarks } }`, variables: {file: null}}))
         // form_data.append('variable', '{query($file: Upload!, $name: String) {addRecognizablePerson(image: $file, name: $name)}}')
         // form_data.append('file', )
@@ -34,8 +39,8 @@ function post (track) {
         form_data.append('map', {"0":["variables.file"]})
         form_data.append(0, image);
 
-
-        fetch("http://localhost:5000", {method: "POST", headers: {"content-type": "multipart/form-data", 'X-Apollo-Operation-Name': 'name', 'Apollo-Require-Preflight': "true", "Some-Special-Header": true}, body: form_data}).then(data => {
+/* headers: { 'X-Apollo-Operation-Name': 'name', 'Apollo-Require-Preflight': "true", "Some-Special-Header": true}*/
+        fetch("http://localhost:5000/graphql", {method: "POST", headers: headers, body: form_data}).then(data => {
             post(track)
             data.json().then(json => {
                 if (json.landmarks["personne inconnue"] !== null) {

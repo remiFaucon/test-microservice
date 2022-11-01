@@ -1,5 +1,7 @@
 import io
 import json
+
+import flask
 import pika, sys, os
 import face_recognition
 import numpy as np
@@ -9,6 +11,7 @@ from ariadne_extensions.federation import FederatedManager
 from flask import Flask, request, jsonify, current_app
 from ariadne import graphql_sync, combine_multipart_data
 from ariadne.contrib.federation import FederatedObjectType
+from flask_cors import CORS
 
 know = []
 knowImage = []
@@ -45,7 +48,7 @@ def recognizing(body):
         response = {}
     else:
         response = {
-            "names": [x for x in face_names],
+            "names": [x for x in face_names if len(face_names)],
             "landmarks": {
                 x: face_landmarks_list[face_names.index(x)]
                 if face_names.index(x) < len(face_landmarks_list) else None
@@ -56,6 +59,7 @@ def recognizing(body):
 
 
 app = Flask(__name__)
+cors = CORS(app , resources={r"/*": {"origins": "*", "allow_headers": "*", "expose_headers": "*", "access-allow-Origin": "*", "Access-Control-Allow-Origin": "*"}})
 query = FederatedObjectType("Query")
 
 
@@ -86,7 +90,7 @@ def graphql_playground():
 @app.route("/graphql", methods=["POST"])
 def graphql_server():
     if request.content_type.startswith("multipart/form-data"):
-        print("req", request.form.get("operations"))
+        print("req", dict(request.form))
         data = combine_multipart_data(
             json.loads(request.form.get("operations")),
             json.loads(request.form.get("map")),

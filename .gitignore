@@ -17,3 +17,14 @@
 /gateway/dist/server.js
 /render/temp.png
 /auth/.idea/vcs.xml
+/render/views/render/.browserslistrc
+/render/views/render/.editorconfig
+/render/views/render/.gitignore
+/render/views/render/angular.json
+/render/views/render/karma.conf.js
+/render/views/render/package.json
+/render/views/render/package-lock.json
+/render/views/render/README.md
+/render/views/render/tsconfig.app.json
+/render/views/render/tsconfig.json
+/render/views/render/tsconfig.spec.json
