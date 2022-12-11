@@ -1,0 +1,13 @@
+io
+json
+flask
+pika
+face_recognition
+numpy
+PIL
+ariadne.constants
+ariadne_extensions.federation
+flask
+ariadne
+ariadne.contrib.federation
+flask_cors

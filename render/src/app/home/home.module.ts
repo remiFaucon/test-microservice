@@ -1,11 +1,6 @@
 import { NgModule } from '@angular/core';
-import { BrowserModule } from '@angular/platform-browser';
-
-import { AppRoutingModule } from './app-routing.module';
-import { AppComponent } from './app.component';
-import { LoginComponent } from './login/login.component';
-import { GraphQLModule } from './graphql.module';
-import { HttpClientModule } from '@angular/common/http';
+import { CommonModule } from '@angular/common';
+import { HomeComponent } from './home.component';
 import {APOLLO_OPTIONS} from "apollo-angular";
 import {HttpLink} from "apollo-angular/http";
 import {InMemoryCache} from "@apollo/client/core";
@@ -13,19 +8,20 @@ import {InMemoryCache} from "@apollo/client/core";
 import * as extract from "extract-files/extractFiles.mjs";
 // @ts-ignore
 import * as extractable from "extract-files/isExtractableFile.mjs";
+import {HomeRoutingModule} from "./home-routing.module";
+import {GraphQLModule} from "../graphql.module";
+import {HttpHeaders} from "@angular/common/http";
 
 
 
 @NgModule({
   declarations: [
-    AppComponent,
-    LoginComponent
+    HomeComponent
   ],
   imports: [
-    BrowserModule,
-    AppRoutingModule,
-    GraphQLModule,
-    HttpClientModule
+     CommonModule,
+     GraphQLModule,
+     HomeRoutingModule
   ],
   providers: [
     {
@@ -34,10 +30,11 @@ import * as extractable from "extract-files/isExtractableFile.mjs";
         return {
           cache: new InMemoryCache(),
           link: httpLink.create({
+            headers: new HttpHeaders({'Content-Type': 'multipart/form-data',/* 'Access-Control-Allow-Headers': 'Authorization'*/}),
             uri: 'http://localhost:5000/graphql',
             extractFiles: (body) => {
-              console.log(body)
-              return  extract.default(body, extractable.default)
+              console.log(extract.default(body, extractable.default))
+              return extract.default(body, extractable.default)
             }
           })
         }
@@ -45,6 +42,6 @@ import * as extractable from "extract-files/isExtractableFile.mjs";
       deps: [HttpLink]
     }
   ],
-  bootstrap: [AppComponent]
+  bootstrap: [HomeComponent]
 })
-export class AppModule { }
+export class HomeModule { }

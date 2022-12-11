@@ -2,7 +2,7 @@ type Query {
     loginUser(uuid: String!): Login
 }
 type Mutation {
-    login(user: UserInput!): LoginResponse
+    login(user: UserInput!): Login!
 }
 type User {
     name: String!
@@ -16,7 +16,7 @@ input UserInput {
 }
 type Login {
     user: User!
-    uuid: String
+    uuid: String!
 }
 type LoginResponse {
     uuid: String!

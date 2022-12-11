@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
 import {Apollo, gql} from "apollo-angular";
-import {extractFiles} from "extract-files";
 // @ts-ignore
 import * as extract from "extract-files/extractFiles.mjs";
 // @ts-ignore
@@ -13,6 +12,7 @@ import * as extractable from "extract-files/isExtractableFile.mjs";
   styleUrls: ['./home.component.scss']
 })
 export class HomeComponent implements OnInit {
+  private id: number = 0;
 
   constructor(private apollo: Apollo) { }
 
@@ -38,22 +38,24 @@ export class HomeComponent implements OnInit {
       this.apollo
         .watchQuery({
           query: gql`
-            query ($file: Upload!) {
-              face(image: $file) {
+            query ($file: Upload!, $id: ID!) {
+              face(image: $file, id: $id) {
+                id
                 names
                 landmarks
               }
             }
           `,
           variables: {
+            id: this.id,
             file: image
           },
           context: {
            useMultipart: true
         }
-        })
-        .valueChanges.subscribe((json: any) => {
+        }).valueChanges.subscribe((json: any) => {
           face(track)
+          this.id++
           if (typeof json.data.face.names !== 'undefined') {
             console.log(typeof json.data.face.names, json.data.face)
             // @ts-ignore

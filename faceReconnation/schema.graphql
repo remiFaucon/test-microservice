@@ -2,12 +2,13 @@ scalar Upload
 scalar JSON
 
 type Query {
-    face(image: Upload!): FaceRes!
+    face(image: Upload!, id: ID!): FaceRes!
     addRecognizablePerson(image: Upload!, name: String): String
 
 }
 
 type FaceRes {
+    id: ID
     names: [String]
     "object of landmarks"
     landmarks: JSON

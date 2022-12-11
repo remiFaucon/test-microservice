@@ -14,11 +14,10 @@ export const resolvers = {
         },
     },
     Mutation: {
-        login: ({user}: any, context: any): any => {
+        login: (_: any, user: any): any => {
             const uuid = v1()
-            user.uuid = uuid
-            login.push(user)
-            return {uuid: uuid}
+            login.push({user: {...user.user}, uuid: uuid})
+            return {user: {...user.user}, uuid: uuid}
         }
     }
     // user: async ({email, password}: any, context: any): Promise<user|void> => {

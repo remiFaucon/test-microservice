@@ -40,7 +40,7 @@ type User struct {
 }
 
 var users = []User{
-	{"582", "zefs", "1234"},
+	{"remi", "faucon.remi04@gmail.coms", "1234"},
 	{"remi", "zefs", "1234"},
 }
 

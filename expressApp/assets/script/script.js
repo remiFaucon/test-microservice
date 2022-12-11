@@ -27,8 +27,9 @@ function post (track) {
 
         headers.append('Content-Type', 'multipart/form-data');
         // headers.append('Accept', 'application/json');
-        headers.append('Origin','http://localhost:3001');
-        headers.append('Access-Control-Allow-Origin','http://localhost:5000');
+        headers.append('Origins','http://localhost:3001');
+        headers.append('Access-Control-Allow-Origin','*');
+        headers.append('Access-Control-Allow-Headers','*');
         headers.append('Apollo-Require-Preflight','true');
 
         form_data.append("operations", JSON.stringify({query: `query ($image: Upload!) { face(image: $file) { names landmarks } }`, variables: {file: null}}))
@@ -37,7 +38,7 @@ function post (track) {
         // form_data.append('file', )
 
         form_data.append('map', {"0":["variables.file"]})
-        form_data.append(0, image);
+        form_data.append("0", image);
 
 /* headers: { 'X-Apollo-Operation-Name': 'name', 'Apollo-Require-Preflight': "true", "Some-Special-Header": true}*/
         fetch("http://localhost:5000/graphql", {method: "POST", headers: headers, body: form_data}).then(data => {

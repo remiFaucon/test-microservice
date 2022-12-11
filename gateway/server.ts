@@ -14,7 +14,8 @@ const gateway = new ApolloGateway({
         },
     }),
     introspectionHeaders: {
-        "content-type": "multipart/form-data"
+        "content-type": "multipart/form-data",
+        // "Access-Control-Allow-Origin": "localhost:3001"
     },
     supergraphSdl: new IntrospectAndCompose({
         subgraphs: [
@@ -23,7 +24,8 @@ const gateway = new ApolloGateway({
             {name: "face", url: "http://localhost:5000/graphql"}
         ],
         introspectionHeaders: {
-            "content-type": "multipart/form-data"
+            "content-type": "multipart/form-data",
+            // "Access-Control-Allow-Origin": "localhost:3001"
         },
     }),
 });

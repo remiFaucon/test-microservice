@@ -17,7 +17,8 @@ know = []
 knowImage = []
 
 
-def recognizing(body):
+
+def recognizing(body, id):
     print("in function", body)
     small_frame = Image.open(body)
     small_frame.convert("RGB")
@@ -48,6 +49,7 @@ def recognizing(body):
         response = {}
     else:
         response = {
+            "id": id,
             "names": [x for x in face_names if len(face_names)],
             "landmarks": {
                 x: face_landmarks_list[face_names.index(x)]
@@ -59,13 +61,28 @@ def recognizing(body):
 
 
 app = Flask(__name__)
-cors = CORS(app , resources={r"/*": {"origins": "*", "allow_headers": "*", "expose_headers": "*", "access-allow-Origin": "*", "Access-Control-Allow-Origin": "*"}})
+CORS(app, support_credentials=True)
 query = FederatedObjectType("Query")
 
+# resp = flask.make_response(str(handle_result))
+# resp.headers['Content-Type'] = 'application/json'
+#
+# h = resp.headers
+# # prepare headers for CORS authentication
+# h['Access-Control-Allow-Origin'] = "*"
+# h['Access-Control-Allow-Methods'] = 'GET'
+# h['Access-Control-Allow-Headers'] = 'X-Requested-With, authentication, authorization'
+
+
+
+@app.after_request
+def after_request(response):
+    response.access_control_allow_origin = "*"
+    return response
 
 @query.field("face")
-def resolve_face(_, __, image=None):
-    return recognizing(image)
+def resolve_face(_, __, image=None, id=None):
+    return recognizing(image, id)
 
 
 @query.field("addRecognizablePerson")
@@ -77,7 +94,7 @@ def resolve_addRecognizablePerson(_, __, image=None, name=None):
     return "person add to program"
 
 manager = FederatedManager(
-    schema_sdl_file='schema.graphql',
+    schema_sdl_file='/home/faucon/WebstormProjects/microservices/faceReconnation/schema.graphql',
     query=query
 )
 
@@ -113,7 +130,16 @@ def graphql_server():
             debug=current_app.debug
         )
     status_code = 200 if success else 400
-    return jsonify(result), status_code
+
+    resp = flask.make_response(str(result))
+    resp.headers['Content-Type'] = 'multipart/form-data'
+    h = resp.headers
+    h['Access-Control-Allow-Origin'] = "*"
+    h['Access-Control-Allow-Methods'] = 'GET,POST,PUT,DELETE,OPTIONS'
+    h['Access-Control-Allow-Headers'] = 'X-Requested-With, authentication, Authorization'
+    h['Authorization'] = "Bearer undefined"
+
+    return resp, status_code
 
 
 def main():
@@ -131,7 +157,7 @@ def main():
         callback_queue = result.method.queue
 
         channel.basic_publish(exchange='', routing_key='faceRep',
-                              body=json.dumps(recognizing(io.BytesIO(body)), indent=4).encode("utf-8"),
+                              body=json.dumps(recognizing(io.BytesIO(body), 0), indent=4).encode("utf-8"),
                               properties=pika.BasicProperties(reply_to=callback_queue, ))
 
     channel.basic_consume(queue='faceReq', on_message_callback=callback, auto_ack=True)
