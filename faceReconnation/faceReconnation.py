@@ -94,7 +94,7 @@ def resolve_addRecognizablePerson(_, __, image=None, name=None):
     return "person add to program"
 
 manager = FederatedManager(
-    schema_sdl_file='/home/faucon/WebstormProjects/microservices/faceReconnation/schema.graphql',
+    schema_sdl_file='./schema.graphql',
     query=query
 )
 
@@ -143,7 +143,7 @@ def graphql_server():
 
 
 def main():
-    connection = pika.BlockingConnection(pika.ConnectionParameters(host='localhost'))
+    connection = pika.BlockingConnection(pika.ConnectionParameters(host='192.168.1.200'))
     channel = connection.channel()
     channel.queue_declare("faceReq", False, False, False, False, None)
     for (dirpath, dirnames, filenames) in os.walk("know"):
