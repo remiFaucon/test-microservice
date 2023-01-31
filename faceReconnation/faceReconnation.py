@@ -130,42 +130,41 @@ def graphql_server():
             debug=current_app.debug
         )
     status_code = 200 if success else 400
-
-    resp = flask.make_response(str(result))
+    # resp = flask.make_response(str(result))
+    resp = flask.make_response(json.dumps(result))
     resp.headers['Content-Type'] = 'multipart/form-data'
-    h = resp.headers
-    h['Access-Control-Allow-Origin'] = "*"
-    h['Access-Control-Allow-Methods'] = 'GET,POST,PUT,DELETE,OPTIONS'
-    h['Access-Control-Allow-Headers'] = 'X-Requested-With, authentication, Authorization'
-    h['Authorization'] = "Bearer undefined"
+    resp.headers['Access-Control-Allow-Origin'] = "*"
+    resp.headers['Access-Control-Allow-Methods'] = 'GET,POST,PUT,DELETE,OPTIONS'
+    resp.headers['Access-Control-Allow-Headers'] = 'X-Requested-With, authentication, Authorization'
+    resp.headers['Authorization'] = "Bearer undefined"
 
     return resp, status_code
 
 
 def main():
-    connection = pika.BlockingConnection(pika.ConnectionParameters(host='192.168.1.200'))
-    channel = connection.channel()
-    channel.queue_declare("faceReq", False, False, False, False, None)
+    # connection = pika.BlockingConnection(pika.ConnectionParameters(host='192.168.1.200'))
+    # channel = connection.channel()
+    # channel.queue_declare("faceReq", False, False, False, False, None)
     for (dirpath, dirnames, filenames) in os.walk("know"):
         know.extend(filenames)
         for filename in filenames:
             knowImage.append(face_recognition.face_encodings(face_recognition.load_image_file("./know/" + filename))[0])
         break
 
-    def callback(ch, method, properties, body):
-        result = channel.queue_declare(queue='', exclusive=True)
-        callback_queue = result.method.queue
-
-        channel.basic_publish(exchange='', routing_key='faceRep',
-                              body=json.dumps(recognizing(io.BytesIO(body), 0), indent=4).encode("utf-8"),
-                              properties=pika.BasicProperties(reply_to=callback_queue, ))
-
-    channel.basic_consume(queue='faceReq', on_message_callback=callback, auto_ack=True)
+    # def callback(ch, method, properties, body):
+    #     result = channel.queue_declare(queue='', exclusive=True)
+    #     callback_queue = result.method.queue
+    #
+    #     channel.basic_publish(exchange='', routing_key='faceRep',
+    #                           body=json.dumps(recognizing(io.BytesIO(body), 0), indent=4).encode("utf-8"),
+    #                           properties=pika.BasicProperties(reply_to=callback_queue, ))
+    #
+    # channel.basic_consume(queue='faceReq', on_message_callback=callback, auto_ack=True)
 
     print(' [*] Waiting for messages. To exit press CTRL+C')
     # graphqlSetup()
-    app.run(debug=True)
-    channel.start_consuming()
+    app.run(host="0.0.0.0", port=5000, debug=True)
+    # channel.start_consuming()
 
 
 if __name__ == '__main__':

@@ -16,7 +16,7 @@ Vagrant.configure("2") do |config|
             snap install go --classic
             cd /home/vagrant/service && go get ./...
             go build /home/vagrant/service/server.go
-            nohup /home/vagrant/service/server &
+            nohup /home/vagrant/service/server > myprogram.out 2> myprogram.err &
         SHELL
     end
     config.vm.define "face" do |face|
@@ -25,25 +25,22 @@ Vagrant.configure("2") do |config|
         face.vm.network "private_network", ip: "192.168.56.11"
         face.vm.synced_folder "./faceReconnation", "/home/vagrant/service/"
         face.vm.provision "shell", inline: <<-SHELL
-            apt-get install software-properties-common -y
-            add-apt-repository ppa:deadsnakes/ppa
-            apt update -y
-            apt install python3 python3-pip cmake -y
-            cd /home/vagrant/service/ && python3 -m pip install -r ./requirement.txt
-            python3 /home/vagrant/service/faceReconnation.py
+            cd service && docker build -t face .
+            docker run -d --name run1 face
         SHELL
     end
-    config.vm.define "app" do |app|
-        app.vm.box = "bento/ubuntu-22.04"
-        app.vm.network "forwarded_port", guest: 3001, host: 3001, host_ip: "127.0.0.1"
-        app.vm.network "private_network", ip: "192.168.56.12"
-        app.vm.synced_folder "./expressApp", "/home/vagrant/service/"
-        app.vm.provision "shell", inline: <<-SHELL
-            curl -fsSL https://deb.nodesource.com/setup_16.x | sudo -E bash - &&\
-            apt-get install nodejs -y
-            node /home/vagrant/service/dist/server.js
-        SHELL
-    end
+#     config.vm.define "app" do |app|
+#         app.vm.box = "bento/ubuntu-22.04"
+#         app.vm.network "forwarded_port", guest: 3001, host: 3001, host_ip: "127.0.0.1"
+#         app.vm.network "private_network", ip: "192.168.56.12"
+#         app.vm.synced_folder "./expressApp", "/home/vagrant/service/"
+#         app.vm.provision "shell", inline: <<-SHELL
+#             curl -fsSL https://deb.nodesource.com/setup_16.x | sudo -E bash - &&\
+#             apt-get install nodejs -y
+#             cd /home/vagrant/service && npm i tsc --legacy-peer-deps && tsc
+#             node /home/vagrant/service/dist/server.js
+#         SHELL
+#     end
     config.vm.define "gateway" do |gateway|
         gateway.vm.box = "bento/ubuntu-22.04"
         gateway.vm.network "forwarded_port", guest: 4000, host: 4000, host_ip: "127.0.0.1"
@@ -52,6 +49,7 @@ Vagrant.configure("2") do |config|
         gateway.vm.provision "shell", inline: <<-SHELL
             curl -fsSL https://deb.nodesource.com/setup_16.x | sudo -E bash - &&\
             apt-get install nodejs -y
+            cd /home/vagrant/service && npm i typescript && npx tsc
             node /home/vagrant/service/dist/server.js
         SHELL
     end
@@ -69,6 +67,6 @@ Vagrant.configure("2") do |config|
 
     config.vm.provision "shell", inline: <<-SHELL
          apt-get update -y
-         apt-get install curl -y
+         apt-get install curl docker.io -y
     SHELL
 end

@@ -19,13 +19,13 @@ const gateway = new ApolloGateway({
     },
     supergraphSdl: new IntrospectAndCompose({
         subgraphs: [
-            {name: "express", url: "http://192.168.56.12:3001/graphql"},
-            {name: "auth", url: "http://192.168.56.10:3002/query"},
-            {name: "face", url: "http://192.168.56.11:5000/graphql"}
+            // {name: "express", url: "http://192.168.56.12:3001/graphql"},
+            {name: "auth", url: "http://localhost:3002/query"},
+            {name: "face", url: "http://localhost:5000/graphql"}
         ],
         introspectionHeaders: {
             "content-type": "multipart/form-data",
-            "Access-Control-Allow-Origin": "192.168.56.12:3001"
+            // "Access-Control-Allow-Origin": "localhost:3001"
         },
     }),
 });

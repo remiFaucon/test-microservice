@@ -55,102 +55,102 @@ function programmeRun(commandObject: ps.Query) {
     })
 }
 
-amqp.connect( 'amqp://localhost', (err, conn) => {
-    if (err)
-        throw err
-
-    app.post('/', (req, res) => {
-        conn.createChannel((err1, channel) => {
-            if (err1)
-                throw err1
-            channel.assertQueue("numberReq", {durable: false});
-
-            if (!req.files)
-                res.send({error: "no files specified"});
-            else {
-                if ("data" in req.files[0]){
-                    channel.sendToQueue("numberReq", Buffer.from(req.files[0].data))
-                    conn.createChannel((err1, channel) => {
-                        channel.assertQueue("numberRep", {durable: false});
-                        channel.consume("numberRep", msg => {
-                            console.log(msg!.content.toString())
-                            res.status(200).send(JSON.parse(msg!.content.toString()));
-                            channel.close(err => err ? console.log(err) : null);
-                        }, {noAck: true})
-                    })
-                }
-            }
-        })
-    })
-
-    app.post("/face", (req, res) => {
-        // console.log(req.files)
-        conn.createChannel((err1, channel) => {
-            if (err1)
-                throw err1
-            channel.assertQueue("faceReq", {durable: false})
-            const timeout = setTimeout(() => res.status(500).send({error: new Error("response Timeout")}), 3000)
-            // @ts-ignore
-            channel.sendToQueue("faceReq", req.files["file"].data)
-            conn.createChannel((err2, channel) => {
-                channel.assertQueue("faceRep", {durable: false});
-                channel.consume("faceRep", msg => {
-                    clearTimeout(timeout);
-                    if (res.statusCode !== 500)
-                        res.status(200).send(JSON.parse(msg!.content.toString()))
-                    channel.close(err => err ? console.log(err) : null);
-                }, {noAck: true})
-            })
-        })
-    })
-
-    app.post("/login", (req, res) => {
-        conn.createChannel((err1, channel) => {
-            if (err1)
-                throw err1
-            channel.assertQueue("login", {durable: false})
-            const timeout = setTimeout(() => res.status(201).render("login.ejs"), 3000)
-            channel.sendToQueue("login", Buffer.from(JSON.stringify(req.body)))
-            conn.createChannel((err2, channel) => {
-                channel.assertQueue("loginRep", {durable: false});
-                channel.consume("loginRep", msg => {
-                    clearTimeout(timeout);
-                    console.log(msg!.content.toString())
-                    if (JSON.parse(msg!.content.toString()).name !== "")
-                        if (res.statusCode !== 201)
-                            res.redirect("/?uuid="+ resolvers.Mutation.login({user: {name: req.body.name, email: req.body.name, password: req.body.password}}, 1).uuid)
-                    else
-                        if (res.statusCode !== 201)
-                            res.render("login.ejs")
-                    channel.close(err => err ? console.log(err) : null);
-                }, {noAck: true})
-            })
-        })
-    })
-
-    app.post("/register", (req, res) => {
-        conn.createChannel((err1, channel) => {
-            if (err1)
-                throw err1
-            channel.assertQueue("register", {durable: false})
-            const timeout = setTimeout(() => res.status(201).render("login.ejs"), 3000)
-            channel.sendToQueue("register", Buffer.from(JSON.stringify(req.body)))
-            conn.createChannel((err2, channel) => {
-                channel.assertQueue("registerRep", {durable: false});
-                channel.consume("registerRep", msg => {
-                    clearTimeout(timeout);
-                    if (JSON.parse(msg!.content.toString()).status === "registered")
-                        if (res.statusCode !== 201)
-                            res.redirect('/?uuid=' + resolvers.Mutation.login({user: {name: req.body.name, email: req.body.name, password: req.body.password}}, 1).uuid)
-                    else
-                        if (res.statusCode !== 201)
-                            res.render("login.ejs")
-                    channel.close(err => err ? console.log(err) : null);
-                }, {noAck: true})
-            })
-        })
-    })
-})
+// amqp.connect( 'amqp://localhost', (err, conn) => {
+//     if (err)
+//         throw err
+//
+//     app.post('/', (req, res) => {
+//         conn.createChannel((err1, channel) => {
+//             if (err1)
+//                 throw err1
+//             channel.assertQueue("numberReq", {durable: false});
+//
+//             if (!req.files)
+//                 res.send({error: "no files specified"});
+//             else {
+//                 if ("data" in req.files[0]){
+//                     channel.sendToQueue("numberReq", Buffer.from(req.files[0].data))
+//                     conn.createChannel((err1, channel) => {
+//                         channel.assertQueue("numberRep", {durable: false});
+//                         channel.consume("numberRep", msg => {
+//                             console.log(msg!.content.toString())
+//                             res.status(200).send(JSON.parse(msg!.content.toString()));
+//                             channel.close(err => err ? console.log(err) : null);
+//                         }, {noAck: true})
+//                     })
+//                 }
+//             }
+//         })
+//     })
+//
+//     app.post("/face", (req, res) => {
+//         // console.log(req.files)
+//         conn.createChannel((err1, channel) => {
+//             if (err1)
+//                 throw err1
+//             channel.assertQueue("faceReq", {durable: false})
+//             const timeout = setTimeout(() => res.status(500).send({error: new Error("response Timeout")}), 3000)
+//             // @ts-ignore
+//             channel.sendToQueue("faceReq", req.files["file"].data)
+//             conn.createChannel((err2, channel) => {
+//                 channel.assertQueue("faceRep", {durable: false});
+//                 channel.consume("faceRep", msg => {
+//                     clearTimeout(timeout);
+//                     if (res.statusCode !== 500)
+//                         res.status(200).send(JSON.parse(msg!.content.toString()))
+//                     channel.close(err => err ? console.log(err) : null);
+//                 }, {noAck: true})
+//             })
+//         })
+//     })
+//
+//     app.post("/login", (req, res) => {
+//         conn.createChannel((err1, channel) => {
+//             if (err1)
+//                 throw err1
+//             channel.assertQueue("login", {durable: false})
+//             const timeout = setTimeout(() => res.status(201).render("login.ejs"), 3000)
+//             channel.sendToQueue("login", Buffer.from(JSON.stringify(req.body)))
+//             conn.createChannel((err2, channel) => {
+//                 channel.assertQueue("loginRep", {durable: false});
+//                 channel.consume("loginRep", msg => {
+//                     clearTimeout(timeout);
+//                     console.log(msg!.content.toString())
+//                     if (JSON.parse(msg!.content.toString()).name !== "")
+//                         if (res.statusCode !== 201)
+//                             res.redirect("/?uuid="+ resolvers.Mutation.login({user: {name: req.body.name, email: req.body.name, password: req.body.password}}, 1).uuid)
+//                     else
+//                         if (res.statusCode !== 201)
+//                             res.render("login.ejs")
+//                     channel.close(err => err ? console.log(err) : null);
+//                 }, {noAck: true})
+//             })
+//         })
+//     })
+//
+//     app.post("/register", (req, res) => {
+//         conn.createChannel((err1, channel) => {
+//             if (err1)
+//                 throw err1
+//             channel.assertQueue("register", {durable: false})
+//             const timeout = setTimeout(() => res.status(201).render("login.ejs"), 3000)
+//             channel.sendToQueue("register", Buffer.from(JSON.stringify(req.body)))
+//             conn.createChannel((err2, channel) => {
+//                 channel.assertQueue("registerRep", {durable: false});
+//                 channel.consume("registerRep", msg => {
+//                     clearTimeout(timeout);
+//                     if (JSON.parse(msg!.content.toString()).status === "registered")
+//                         if (res.statusCode !== 201)
+//                             res.redirect('/?uuid=' + resolvers.Mutation.login({user: {name: req.body.name, email: req.body.name, password: req.body.password}}, 1).uuid)
+//                     else
+//                         if (res.statusCode !== 201)
+//                             res.render("login.ejs")
+//                     channel.close(err => err ? console.log(err) : null);
+//                 }, {noAck: true})
+//             })
+//         })
+//     })
+// })
 
 server.listen(port, async () => {
 
