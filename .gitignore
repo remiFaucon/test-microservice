@@ -28,3 +28,4 @@
 /expressApp/views/render/tsconfig.app.json
 /expressApp/views/render/tsconfig.json
 /expressApp/views/render/tsconfig.spec.json
+/.vagrant/

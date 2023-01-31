@@ -25,7 +25,7 @@ Vagrant.configure("2") do |config|
         face.vm.network "private_network", ip: "192.168.56.11"
         face.vm.synced_folder "./faceReconnation", "/home/vagrant/service/"
         face.vm.provision "shell", inline: <<-SHELL
-            apt install software-properties-common
+            apt install software-properties-common -y
             add-apt-repository ppa:deadsnakes/ppa
             apt update -y
             apt install python3 python3-pip -y
