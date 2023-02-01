@@ -35,7 +35,6 @@ export class AuthService {
     //       this.router.navigate(['user-profile/' + res.msg._id]);
     //     });
     //   });
-    console.log(`${user}`);
     this.apollo
         .mutate({
           mutation: gql`

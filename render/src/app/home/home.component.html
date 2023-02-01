@@ -10,8 +10,13 @@
 <!--</head>-->
 <!--<body>-->
 <!--<main>-->
-    <canvas id="myCanvas"></canvas>
-    <h2></h2>
+<webcam
+  [trigger]="invokeObservable"
+  (imageCapture)="captureImg($event)"
+  (initError)="handleInitError($event)"
+></webcam>
+    <canvas #myCanvas></canvas>
+    <h2 [innerText]="h2"></h2>
 <!--</main>-->
 <div id="drop_file_zone" ondrop="upload_file(event)" ondragover="return false">
     <div id="drag_upload_file">

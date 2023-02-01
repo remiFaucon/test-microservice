@@ -4,7 +4,6 @@ import (
 	"log"
 	"main/graph"
 	"main/graph/generated"
-	"main/services/auth"
 	"net/http"
 	"os"
 
@@ -26,5 +25,5 @@ func main() {
 
 	log.Printf("connect to http://localhost:%s/ for GraphQL playground", port)
 	log.Fatal(http.ListenAndServe(":"+port, nil))
-	auth.Main()
+	//auth.Main()
 }

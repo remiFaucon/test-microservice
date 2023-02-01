@@ -1,30 +1,32 @@
+import base64
 import io
 import json
-
-import flask
-import pika, sys, os
+import os
+import sys
 import face_recognition
+import flask
 import numpy as np
 from PIL import Image
+from ariadne import graphql_sync
 from ariadne.constants import PLAYGROUND_HTML
-from ariadne_extensions.federation import FederatedManager
-from flask import Flask, request, jsonify, current_app
-from ariadne import graphql_sync, combine_multipart_data
 from ariadne.contrib.federation import FederatedObjectType
+from ariadne_extensions.federation import FederatedManager
+from flask import Flask, request, current_app
 from flask_cors import CORS
 
 know = []
 knowImage = []
 
 
-
 def recognizing(body, id):
-    print("in function", body)
-    small_frame = Image.open(body)
+    base64_img_bytes = body.encode('utf-8')
+    with open("temp.jpeg", "wb") as f:
+        f.write(base64.decodebytes(base64_img_bytes))
+    small_frame = Image.open("temp.jpeg")
     small_frame.convert("RGB")
     small_frame.thumbnail((300, 300), Image.BICUBIC)
-    small_frame.save("temp.png")
-    img = face_recognition.load_image_file("temp.png", "RGB")
+    small_frame.save("temp.jpeg")
+    img = face_recognition.load_image_file("temp.jpeg", "RGB")
 
     face_landmarks_list = face_recognition.face_landmarks(img)
 
@@ -64,21 +66,15 @@ app = Flask(__name__)
 CORS(app, support_credentials=True)
 query = FederatedObjectType("Query")
 
-# resp = flask.make_response(str(handle_result))
-# resp.headers['Content-Type'] = 'application/json'
-#
-# h = resp.headers
-# # prepare headers for CORS authentication
-# h['Access-Control-Allow-Origin'] = "*"
-# h['Access-Control-Allow-Methods'] = 'GET'
-# h['Access-Control-Allow-Headers'] = 'X-Requested-With, authentication, authorization'
-
-
 
 @app.after_request
 def after_request(response):
     response.access_control_allow_origin = "*"
+    response.content_type = 'application/json'
+    response.access_control_allow_headers = "*"
+    # response.authorization = request.headers.get("authorization")
     return response
+
 
 @query.field("face")
 def resolve_face(_, __, image=None, id=None):
@@ -93,6 +89,7 @@ def resolve_addRecognizablePerson(_, __, image=None, name=None):
     knowImage.append(face_recognition.face_encodings(face_recognition.load_image_file("./know/" + file_name))[0])
     return "person add to program"
 
+
 manager = FederatedManager(
     schema_sdl_file='./schema.graphql',
     query=query
@@ -104,19 +101,31 @@ def graphql_playground():
     return PLAYGROUND_HTML, 200
 
 
-@app.route("/graphql", methods=["POST"])
+@app.route("/graphql", methods=["POST", "OPTION"])
 def graphql_server():
     if request.content_type.startswith("multipart/form-data"):
-        print("req", dict(request.form))
-        data = combine_multipart_data(
-            json.loads(request.form.get("operations")),
-            json.loads(request.form.get("map")),
-            dict(request.files)
-        )
-        print("after post multipart", data)
+        data = request.get_data()[:417]
+        split = str.split(data.decode("utf-8"), "\r\n")
+
+        image = request.get_data()[550:]
+        if image[0] == 103:
+            image = request.get_data()[547:]
+        if image[0] == 101:
+            image = request.get_data()[553:]
+        image = image[:-63]
+
+        # data = combine_multipart_data(
+        #     # # json.loads(request.form.get("operations")),
+        #     # {"operations": json.loads(split[3])},
+        #     # # json.loads(request.form.get("map")),
+        #     # {"map": json.loads(split[7])},
+        #     # # dict(request.files)
+        #     # {"1": image}
+        #     json.loads()
+        # )
         success, result = graphql_sync(
             manager.get_schema(),
-            data,
+            json.loads(request.get_data()),
             context_value=request,
             debug=current_app.debug
         )
@@ -132,12 +141,12 @@ def graphql_server():
     status_code = 200 if success else 400
     # resp = flask.make_response(str(result))
     resp = flask.make_response(json.dumps(result))
-    resp.headers['Content-Type'] = 'multipart/form-data'
+    resp.headers['Content-Type'] = 'application/json'
     resp.headers['Access-Control-Allow-Origin'] = "*"
-    resp.headers['Access-Control-Allow-Methods'] = 'GET,POST,PUT,DELETE,OPTIONS'
-    resp.headers['Access-Control-Allow-Headers'] = 'X-Requested-With, authentication, Authorization'
-    resp.headers['Authorization'] = "Bearer undefined"
-
+    # resp.headers['Access-Control-Allow-Methods'] = 'GET,POST,PUT,DELETE,OPTIONS'
+    resp.headers['Access-Control-Allow-Headers'] = 'authorization'
+    resp.headers['Authorization'] = request.headers.get("authorization")
+    #
     return resp, status_code
 
 

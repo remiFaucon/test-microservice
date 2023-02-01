@@ -21,7 +21,7 @@ const gateway = new ApolloGateway({
         subgraphs: [
             // {name: "express", url: "http://192.168.56.12:3001/graphql"},
             {name: "auth", url: "http://localhost:3002/query"},
-            {name: "face", url: "http://localhost:5000/graphql"}
+            // {name: "face", url: "http://localhost:5000/graphql"}
         ],
         introspectionHeaders: {
             "content-type": "multipart/form-data",

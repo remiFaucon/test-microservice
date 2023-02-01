@@ -22,6 +22,7 @@
     "apollo-angular": "^4.1.0",
     "extract-files": "^13.0.0",
     "graphql": "^16",
+    "ngx-webcam": "^0.4.1",
     "rxjs": "~7.5.0",
     "tslib": "^2.3.0",
     "zone.js": "~0.11.4"

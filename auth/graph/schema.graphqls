@@ -1,8 +1,10 @@
 type Query {
   user(email: String!, password: Int): User
+  loginUser(uuid: String!): Login
 }
 type Mutation {
   register(user: UserInput!): RegisteredResponse
+  login(user: UserInput!): LoginResponse!
 }
 type User {
   name: String!
@@ -17,4 +19,10 @@ input UserInput {
 type RegisteredResponse {
   status: String!
 }
-
+type Login {
+    user: User!
+    uuid: String!
+}
+type LoginResponse {
+    uuid: String!
+}

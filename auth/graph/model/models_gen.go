@@ -2,6 +2,15 @@
 
 package model
 
+type Login struct {
+	User *User  `json:"user"`
+	UUID string `json:"uuid"`
+}
+
+type LoginResponse struct {
+	UUID string `json:"uuid"`
+}
+
 type RegisteredResponse struct {
 	Status string `json:"status"`
 }

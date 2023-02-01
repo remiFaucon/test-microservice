@@ -11,17 +11,17 @@ import * as extractable from "extract-files/isExtractableFile.mjs";
 import {HomeRoutingModule} from "./home-routing.module";
 import {GraphQLModule} from "../graphql.module";
 import {HttpHeaders} from "@angular/common/http";
-
-
+import { WebcamModule } from 'ngx-webcam';
 
 @NgModule({
   declarations: [
     HomeComponent
   ],
   imports: [
-     CommonModule,
-     GraphQLModule,
-     HomeRoutingModule
+    CommonModule,
+    GraphQLModule,
+    HomeRoutingModule,
+    WebcamModule
   ],
   providers: [
     {
@@ -30,7 +30,7 @@ import {HttpHeaders} from "@angular/common/http";
         return {
           cache: new InMemoryCache(),
           link: httpLink.create({
-            headers: new HttpHeaders({'Content-Type': 'multipart/form-data',/* 'Access-Control-Allow-Headers': 'Authorization'*/}),
+            headers: new HttpHeaders({'Content-Type': 'multipart/form-data'}),
             uri: 'http://localhost:5000/graphql',
             extractFiles: (body) => {
               console.log(extract.default(body, extractable.default))

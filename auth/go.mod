@@ -4,7 +4,7 @@ go 1.18
 
 require (
 	github.com/99designs/gqlgen v0.17.20
-	github.com/rabbitmq/amqp091-go v1.5.0
+	github.com/google/uuid v1.3.0
 	github.com/vektah/gqlparser/v2 v2.5.1
 )
 
