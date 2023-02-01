@@ -3,5 +3,5 @@ WORKDIR /app
 COPY package.json ./
 RUN npm install
 COPY . ./
-RUN npm i typescript && npx tsc
+#RUN npm i -g typescript && npx tsc
 CMD ["node", "dist/server.js"]
