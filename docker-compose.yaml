@@ -13,3 +13,22 @@ services:
       - "./auth:/app"
     ports:
       - "3002:3002"
+
+  gateway:
+    build: gateway/
+    volumes:
+      - "./gateway:/app"
+    ports:
+      - "4000:4000"
+    depends_on:
+      - face
+      - auth
+
+  front:
+    build: render/
+    volumes:
+      - "./render:/app"
+    ports:
+      - "4200:4200"
+    depends_on:
+      - gateway
