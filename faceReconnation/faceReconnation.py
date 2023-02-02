@@ -39,7 +39,6 @@ def recognizing(body, id):
         name = "person" + str(i)
         face_distances = face_recognition.face_distance(knowImage, face_encoding)
         if len(face_distances) != 0:
-            print(face_distances)
             best_match_index = np.argmin(face_distances)
             if matches[best_match_index]:
                 name = know[best_match_index]
@@ -131,7 +130,6 @@ def graphql_server():
         )
     else:
         data = request.get_json()
-        print("json", data)
         success, result = graphql_sync(
             manager.get_schema(),
             data,
@@ -172,7 +170,7 @@ def main():
 
     print(' [*] Waiting for messages. To exit press CTRL+C')
     # graphqlSetup()
-    app.run(host="0.0.0.0", port=5000, debug=True)
+    app.run(host="0.0.0.0", port=5000, debug=False)
     # channel.start_consuming()
 
 

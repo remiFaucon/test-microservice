@@ -1,7 +1,10 @@
-import {ApolloServer, GraphQLRequest} from '@apollo/server';
+import {ApolloServer} from '@apollo/server';
 import {ApolloGateway, IntrospectAndCompose} from "@apollo/gateway";
 import {startStandaloneServer} from '@apollo/server/standalone';
 import FileUploadDataSource from "@profusion/apollo-federation-upload";
+import {env} from "process";
+import {config} from 'dotenv';
+config()
 
 const gateway = new ApolloGateway({
     buildService: ({ url }) => new FileUploadDataSource({
@@ -20,7 +23,7 @@ const gateway = new ApolloGateway({
     supergraphSdl: new IntrospectAndCompose({
         subgraphs: [
             // {name: "express", url: "http://192.168.56.12:3001/graphql"},
-            {name: "auth", url: "http://localhost:3002/query"},
+            {name: "auth", url: env.AUTH_SUBGRAPH},
             // {name: "face", url: "http://localhost:5000/graphql"}
         ],
         introspectionHeaders: {

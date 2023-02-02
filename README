@@ -1,0 +1,8 @@
+### install
+
+## ubuntu
+
+```
+git clone https://github.com/remiFaucon/test-microservice.git
+cd microservice && bash run.bash
+```
