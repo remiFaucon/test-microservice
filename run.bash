@@ -19,3 +19,4 @@ if [ ! -f "/etc/nginx/conf.d/microservice-angular.conf" ]; then
 fi
 cd .. && sudo docker-compose up -d
 echo "client started on url https://face-detector.test"
+open https://face-detector.test
