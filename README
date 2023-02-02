@@ -6,3 +6,9 @@
 git clone https://github.com/remiFaucon/test-microservice.git
 cd microservice && bash run.bash
 ```
+
+### connect
+
+ email: `demo@gmail.com`
+ username: `demo`
+ password: `demo`
