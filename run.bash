@@ -1,5 +1,7 @@
 if [ ! -f "/etc/nginx/conf.d/microservice-angular.conf" ]; then
-  sudo apt-get install docker.io docker-compose nginx
+  sudo apt-get install docker.io docker-compose nginx node npm
+  npm install -g pm2 typescript
+  cd gateway && npx tsc
   echo "server{
       listen 443 ssl;
       server_name sitealacon.fr;
@@ -11,9 +13,9 @@ if [ ! -f "/etc/nginx/conf.d/microservice-angular.conf" ]; then
           proxy_pass http://localhost:4200;
       }
   }" > /etc/nginx/conf.d/microservice-angular.conf
-  echo "127.0.0.1 face-detector.test" >> /etc/hosts
+  echo "
+  127.0.0.1 face-detector.test" >> /etc/hosts
   sudo openssl req -new -x509 -newkey rsa:2048 -sha256 -nodes -keyout /etc/cert/localhost-face.key -days 3560 -out /etc/cert/localhost-face.crt -config ssl.conf
 fi
-sudo docker-compose up -d
-pm2 start gateway/dist/server.js
-echo "client started on url face-detector.test"
+cd .. && sudo docker-compose up -d
+echo "client started on url https://face-detector.test"

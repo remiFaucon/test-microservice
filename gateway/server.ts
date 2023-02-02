@@ -2,9 +2,9 @@ import {ApolloServer} from '@apollo/server';
 import {ApolloGateway, IntrospectAndCompose} from "@apollo/gateway";
 import {startStandaloneServer} from '@apollo/server/standalone';
 import FileUploadDataSource from "@profusion/apollo-federation-upload";
-import {env} from "process";
 import {config} from 'dotenv';
 config()
+import {env} from "process";
 
 const gateway = new ApolloGateway({
     buildService: ({ url }) => new FileUploadDataSource({

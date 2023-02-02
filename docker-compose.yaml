@@ -16,19 +16,19 @@ services:
     networks:
       - gateway_network
 
-#  gateway:
-#    build: gateway/
-#    volumes:
-#      - "./gateway:/app"
-#    ports:
-#      - "4000:4000"
-#    depends_on:
-#      - face
-#      - auth
-#    environment:
-#      AUTH_SUBGRAPH: http://gateway:3002/query
-#    networks:
-#      - gateway_network
+  gateway:
+    build: gateway/
+    volumes:
+      - "./gateway:/app"
+    ports:
+      - "4000:4000"
+    depends_on:
+      - face
+      - auth
+    environment:
+      AUTH_SUBGRAPH: http://auth:3002/query
+    networks:
+      - gateway_network
 
   front:
     build: render/
@@ -36,8 +36,8 @@ services:
       - "./render:/app"
     ports:
       - "4200:4200"
-#    depends_on:
-#      - gateway
+    depends_on:
+      - gateway
 
 
 networks:
