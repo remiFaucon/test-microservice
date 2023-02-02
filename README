@@ -1,14 +1,14 @@
-### install
+## install
 
-## ubuntu
+#### ubuntu
 
 ```
 git clone https://github.com/remiFaucon/test-microservice.git
 cd microservice && bash run.bash
 ```
 
-### connect
+## connect to app
 
- email: `demo@gmail.com`
- username: `demo`
- password: `demo`
+ - email: `demo@gmail.com`
+ - username: `demo`
+ - password: `demo`
