@@ -15,24 +15,22 @@ import * as extract from "extract-files/extractFiles.mjs";
 import * as extractable from "extract-files/isExtractableFile.mjs";
 import {ReactiveFormsModule} from "@angular/forms";
 import {AuthInterceptor} from "./shared/authconfig.interceptor";
-import {VisioComponent} from "./visio/visio.component";
 
 
 @NgModule({
   declarations: [
     AppComponent,
-    LoginComponent,
-    VisioComponent
+    LoginComponent
   ],
   imports: [
     BrowserModule,
     AppRoutingModule,
     HttpClientModule,
     ReactiveFormsModule,
-    ApolloModule,
+    ApolloModule
   ],
   providers: [
-    {
+     {
       provide: APOLLO_OPTIONS,
       useFactory(httpLink: HttpLink) {
         return {
@@ -41,7 +39,7 @@ import {VisioComponent} from "./visio/visio.component";
             uri: 'http://localhost:4000',
             extractFiles: (body) => {
               console.log(body)
-              return extract.default(body, extractable.default)
+              return  extract.default(body, extractable.default)
             }
           })
         }
@@ -53,9 +51,6 @@ import {VisioComponent} from "./visio/visio.component";
       useClass: AuthInterceptor,
       multi: true
     }
-  ],
-  exports: [
-    VisioComponent
   ],
   bootstrap: [AppComponent]
 })
