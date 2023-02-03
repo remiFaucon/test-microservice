@@ -4,7 +4,7 @@
 
 ```bash
 git clone https://github.com/remiFaucon/test-microservice.git
-cd microservice && bash run.bash
+cd microService && bash run.bash
 ```
 
 ## connect to app
