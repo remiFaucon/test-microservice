@@ -12,17 +12,19 @@ import {HomeRoutingModule} from "./home-routing.module";
 import {GraphQLModule} from "../graphql.module";
 import {HttpHeaders} from "@angular/common/http";
 import { WebcamModule } from 'ngx-webcam';
+import {AppModule} from "../app.module";
 
 @NgModule({
   declarations: [
     HomeComponent
   ],
-  imports: [
-    CommonModule,
-    GraphQLModule,
-    HomeRoutingModule,
-    WebcamModule
-  ],
+    imports: [
+        CommonModule,
+        GraphQLModule,
+        HomeRoutingModule,
+        WebcamModule,
+        AppModule
+    ],
   providers: [
     {
       provide: APOLLO_OPTIONS,
