@@ -18,13 +18,6 @@
     <canvas #myCanvas></canvas>
     <h2 [innerText]="h2"></h2>
 <!--</main>-->
-<div id="drop_file_zone" ondrop="upload_file(event)" ondragover="return false">
-    <div id="drag_upload_file">
-        <p>Drop file(s) here</p>
-        <p>or</p>
-        <p><input type="button" value="Select File(s)" onclick="file_explorer();" /></p>
-        <input type="file" id="selectfile"/>
-    </div>
-</div>
+<input type="file" id="selectfile" (change)="ajax_file_upload($event)"/>
 <!--</body>-->
 <!--</html>-->

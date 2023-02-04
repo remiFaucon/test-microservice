@@ -86,7 +86,7 @@ def resolve_addRecognizablePerson(_, __, image=None, name=None):
     image.save(os.path.join('./know/', file_name))
     know.append(name)
     knowImage.append(face_recognition.face_encodings(face_recognition.load_image_file("./know/" + file_name))[0])
-    return "person add to program"
+    return name + " add to program"
 
 
 manager = FederatedManager(
@@ -102,16 +102,17 @@ def graphql_playground():
 
 @app.route("/graphql", methods=["POST", "OPTION"])
 def graphql_server():
+    #  TODO
     if request.content_type.startswith("multipart/form-data"):
-        data = request.get_data()[:417]
-        split = str.split(data.decode("utf-8"), "\r\n")
-
-        image = request.get_data()[550:]
-        if image[0] == 103:
-            image = request.get_data()[547:]
-        if image[0] == 101:
-            image = request.get_data()[553:]
-        image = image[:-63]
+        # data = request.get_data()[:417]
+        # split = str.split(data.decode("utf-8"), "\r\n")
+        #
+        # image = request.get_data()[550:]
+        # if image[0] == 103:
+        #     image = request.get_data()[547:]
+        # if image[0] == 101:
+        #     image = request.get_data()[553:]
+        # image = image[:-63]
 
         # data = combine_multipart_data(
         #     # # json.loads(request.form.get("operations")),
