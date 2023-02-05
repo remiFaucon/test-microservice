@@ -84,12 +84,9 @@ export class HomeComponent implements AfterViewInit {
   }
 
   public ajax_file_upload(files_obj: any) {
-    console.log(files_obj.target.files[0])
-
     const reader = new FileReader();
     reader.readAsDataURL(files_obj.target.files[0]);
     reader.onload = () => {
-
 
       this.apollo
       .watchQuery({
@@ -105,6 +102,8 @@ export class HomeComponent implements AfterViewInit {
         context: {
           useMultipart: true
         }
+      }).valueChanges.subscribe((response) => {
+        console.log(response)
       })
     }
   }

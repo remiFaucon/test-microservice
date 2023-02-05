@@ -33,7 +33,6 @@ import { WebcamModule } from 'ngx-webcam';
             headers: new HttpHeaders({'Content-Type': 'multipart/form-data'}),
             uri: 'http://localhost:5000/graphql',
             extractFiles: (body) => {
-              console.log(extract.default(body, extractable.default))
               return extract.default(body, extractable.default)
             }
           })

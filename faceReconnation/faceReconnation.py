@@ -1,5 +1,4 @@
 import base64
-import io
 import json
 import os
 import sys
@@ -71,7 +70,6 @@ def after_request(response):
     response.access_control_allow_origin = "*"
     response.content_type = 'application/json'
     response.access_control_allow_headers = "*"
-    # response.authorization = request.headers.get("authorization")
     return response
 
 
@@ -82,10 +80,14 @@ def resolve_face(_, __, image=None, id=None):
 
 @query.field("addRecognizablePerson")
 def resolve_addRecognizablePerson(_, __, image=None, name=None):
-    file_name = name + "." + image.filename.split(".")[-1]
-    image.save(os.path.join('./know/', file_name))
+    extension = "." + image.split(';')[0].split('/')[1]
+    filename = os.path.join("know", name + extension)
+    base64_img_bytes = image.split(';base64,')[1].encode('utf-8')
+    with open(filename, "wb") as fh:
+        fh.write(base64.decodebytes(base64_img_bytes))
+        fh.close()
     know.append(name)
-    knowImage.append(face_recognition.face_encodings(face_recognition.load_image_file("./know/" + file_name))[0])
+    knowImage.append(face_recognition.face_encodings(face_recognition.load_image_file(filename))[0])
     return name + " add to program"
 
 
@@ -138,14 +140,12 @@ def graphql_server():
             debug=current_app.debug
         )
     status_code = 200 if success else 400
-    # resp = flask.make_response(str(result))
     resp = flask.make_response(json.dumps(result))
     resp.headers['Content-Type'] = 'application/json'
     resp.headers['Access-Control-Allow-Origin'] = "*"
-    # resp.headers['Access-Control-Allow-Methods'] = 'GET,POST,PUT,DELETE,OPTIONS'
     resp.headers['Access-Control-Allow-Headers'] = 'authorization'
     resp.headers['Authorization'] = request.headers.get("authorization")
-    #
+
     return resp, status_code
 
 
@@ -159,20 +159,7 @@ def main():
             knowImage.append(face_recognition.face_encodings(face_recognition.load_image_file("./know/" + filename))[0])
         break
 
-    # def callback(ch, method, properties, body):
-    #     result = channel.queue_declare(queue='', exclusive=True)
-    #     callback_queue = result.method.queue
-    #
-    #     channel.basic_publish(exchange='', routing_key='faceRep',
-    #                           body=json.dumps(recognizing(io.BytesIO(body), 0), indent=4).encode("utf-8"),
-    #                           properties=pika.BasicProperties(reply_to=callback_queue, ))
-    #
-    # channel.basic_consume(queue='faceReq', on_message_callback=callback, auto_ack=True)
-
-    print(' [*] Waiting for messages. To exit press CTRL+C')
-    # graphqlSetup()
     app.run(host="0.0.0.0", port=5000, debug=False)
-    # channel.start_consuming()
 
 
 if __name__ == '__main__':
