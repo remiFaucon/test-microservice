@@ -19,7 +19,7 @@ directive @link(url: String, as: String, for: link__Purpose, import: [link__Impo
 scalar join__FieldSet
 
 enum join__Graph {
-  AUTH @join__graph(name: "auth", url: "http://auth:3002/query")
+  AUTH @join__graph(name: "auth", url: "http://auth/query")
 }
 
 scalar link__Import
