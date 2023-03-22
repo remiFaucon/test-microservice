@@ -19,8 +19,7 @@ directive @link(url: String, as: String, for: link__Purpose, import: [link__Impo
 scalar join__FieldSet
 
 enum join__Graph {
-  AUTH @join__graph(name: "auth", url: "http://localhost:3002/")
-  EXPRESS @join__graph(name: "express", url: "http://localhost:3001/graphql")
+  AUTH @join__graph(name: "auth", url: "http://auth:3002/query")
 }
 
 scalar link__Import
@@ -38,32 +37,30 @@ enum link__Purpose {
 }
 
 type Login
-  @join__type(graph: EXPRESS)
+  @join__type(graph: AUTH)
 {
   user: User!
   uuid: String
 }
 
 type LoginResponse
-  @join__type(graph: EXPRESS)
+  @join__type(graph: AUTH)
 {
   uuid: String!
 }
 
 type Mutation
   @join__type(graph: AUTH)
-  @join__type(graph: EXPRESS)
 {
   register(user: UserInput!): RegisteredResponse @join__field(graph: AUTH)
-  login(user: UserInput!): LoginResponse @join__field(graph: EXPRESS)
+  login(user: UserInput!): LoginResponse @join__field(graph: AUTH)
 }
 
 type Query
   @join__type(graph: AUTH)
-  @join__type(graph: EXPRESS)
 {
   user(email: String!, password: Int): User @join__field(graph: AUTH)
-  loginUser(uuid: String!): Login @join__field(graph: EXPRESS)
+  loginUser(uuid: String!): Login @join__field(graph: AUTH)
 }
 
 type RegisteredResponse
@@ -74,7 +71,6 @@ type RegisteredResponse
 
 type User
   @join__type(graph: AUTH)
-  @join__type(graph: EXPRESS)
 {
   name: String!
   email: String!
@@ -83,7 +79,6 @@ type User
 
 input UserInput
   @join__type(graph: AUTH)
-  @join__type(graph: EXPRESS)
 {
   name: String!
   email: String!

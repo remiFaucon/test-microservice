@@ -19,3 +19,5 @@
 /auth/.idea/
 /.vagrant/
 /.idea/
+/k8s/auth-0.1.0.tgz
+/k8s/gateway-1.12.1.tgz
